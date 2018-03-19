@@ -1,0 +1,51 @@
+{
+  "name": "react-native-android-webview-v",
+  "version": "0.0.9",
+  "description": "react native webview (vanson)",
+  "main": "WebViewAndroid.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VansonLeung/react-native-android-webview-v.git"
+  },
+  "keywords": [
+    "react-native",
+    "webview"
+  ],
+  "author": {
+    "name": "react-dev"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VansonLeung/react-native-android-webview-v/issues"
+  },
+  "homepage": "https://github.com/VansonLeung/react-native-android-webview-v#readme",
+  "_id": "react-native-android-webview-v@0.0.9",
+  "_shasum": "494acec276f70639b6e7ab62ebac995bbe7b67e6",
+  "_from": "react-native-android-webview-v@latest",
+  "_npmVersion": "3.10.10",
+  "_nodeVersion": "6.10.0",
+  "_npmUser": {
+    "name": "vansonhk",
+    "email": "vanson@vanportdev.com"
+  },
+  "dist": {
+    "shasum": "494acec276f70639b6e7ab62ebac995bbe7b67e6",
+    "tarball": "https://registry.npmjs.org/react-native-android-webview-v/-/react-native-android-webview-v-0.0.9.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "vansonhk",
+      "email": "vanson@vanportdev.com"
+    }
+  ],
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/react-native-android-webview-v-0.0.9.tgz_1510804973452_0.34182177437469363"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/react-native-android-webview-v/-/react-native-android-webview-v-0.0.9.tgz",
+  "readme": "ERROR: No README data found!"
+}
