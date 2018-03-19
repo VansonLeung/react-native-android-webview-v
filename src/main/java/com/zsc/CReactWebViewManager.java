@@ -16,13 +16,17 @@ import android.graphics.Picture;
 import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.RelativeLayout;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.CookieManager;
+import android.webkit.WebSettings;
 
 import com.facebook.common.logging.FLog;
 import com.facebook.react.bridge.Arguments;
@@ -376,6 +380,15 @@ public class CReactWebViewManager extends SimpleViewManager<WebView> {
     return REACT_CLASS;
   }
 
+  WebView childView;
+
+  private class PopupWebViewClient extends WebViewClient {
+      @Override
+      public boolean shouldOverrideUrlLoading(WebView view, String url) {
+          return false;
+      }
+  }
+
   @Override
   protected WebView createViewInstance(ThemedReactContext reactContext) {
     ReactWebView webView = new ReactWebView(reactContext);
@@ -384,12 +397,59 @@ public class CReactWebViewManager extends SimpleViewManager<WebView> {
       public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
         callback.invoke(origin, true, false);
       }
+
+      @Override
+      public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
+          childView = new WebView(mContext);
+          childView.getSettings().setDomStorageEnabled(true);
+          childView.getSettings().setJavaScriptEnabled(true);
+          childView.getSettings().setSupportZoom(true);
+          childView.getSettings().setBuiltInZoomControls(true);
+          childView.setWebViewClient(new PopupWebViewClient());
+          childView.setWebChromeClient(this);
+          childView.setLayoutParams(
+            new LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT));
+
+          childView.getSettings().setSupportMultipleWindows(true);
+          ViewGroup parentLayout = ((ViewGroup)webView.getParent());
+          parentLayout.addView(childView);
+          childView.requestFocus();
+          webView.setVisibility(View.GONE);
+
+          WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
+          transport.setWebView(childView);
+          resultMsg.sendToTarget();
+          return true;
+      }
+
+      @Override
+      public boolean onConsoleMessage(ConsoleMessage cm) {
+          Log.d("WebViewDebug", cm.message() + " -- From line "
+                  + cm.lineNumber() + " of "
+                  + cm.sourceId());
+          return true;
+      }
+
+      @Override
+      public void onCloseWindow(WebView window) {
+          parentLayout.removeViewAt(parentLayout.getChildCount() -1);
+          childView = null;
+          webView.setVisibility(View.VISIBLE);
+          webView.requestFocus();
+      }
     });
     reactContext.addLifecycleEventListener(webView);
     mWebViewConfig.configWebView(webView);
     webView.getSettings().setBuiltInZoomControls(true);
     webView.getSettings().setDisplayZoomControls(false);
     webView.getSettings().setDomStorageEnabled(true);
+    webView.getSettings().setJavaScriptEnabled(true);
+    webView.getSettings().setAppCacheEnabled(true);
+    webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+    webView.getSettings().setSupportMultipleWindows(true);
+    webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+    CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
 
     // Fixes broken full-screen modals/galleries due to body height being 0.
     webView.setLayoutParams(
