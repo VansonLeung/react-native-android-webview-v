@@ -16,6 +16,7 @@ import android.graphics.Picture;
 import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
@@ -27,6 +28,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.CookieManager;
 import android.webkit.WebSettings;
+
+import android.os.Message;
+import android.webkit.ConsoleMessage;
+import android.util.Log;
 
 import com.facebook.common.logging.FLog;
 import com.facebook.react.bridge.Arguments;
@@ -400,7 +405,7 @@ public class CReactWebViewManager extends SimpleViewManager<WebView> {
 
       @Override
       public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
-          childView = new WebView(mContext);
+          childView = new WebView(view.getContext());
           childView.getSettings().setDomStorageEnabled(true);
           childView.getSettings().setJavaScriptEnabled(true);
           childView.getSettings().setSupportZoom(true);
@@ -433,6 +438,7 @@ public class CReactWebViewManager extends SimpleViewManager<WebView> {
 
       @Override
       public void onCloseWindow(WebView window) {
+          ViewGroup parentLayout = ((ViewGroup)webView.getParent());
           parentLayout.removeViewAt(parentLayout.getChildCount() -1);
           childView = null;
           webView.setVisibility(View.VISIBLE);
